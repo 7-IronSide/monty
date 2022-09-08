@@ -1,55 +1,47 @@
 #include "monty.h"
 
+vars var;
+
 /**
- *  main - Main
- *
- *  @argc: Number of args
- *
- *  @argv: Command line args
- *
- *  Return: Void
+ * main - Start LIFO, FILO program
+ * @ac: Number of arguments
+ * @av: Pointer containing arguments
+ * Return: 0 Success, 1 Failed
  */
-
-int main(int argc, char *argv[])
+int main(int ac, char **av)
 {
-	stack_t *head = NULL;
-	char  *str = NULL, *operator_array[2], *temp;
-	size_t bufsize = 1024, line_count = 0;
-	ssize_t get_line;
-	void (*operator_function)(stack_t **stack, unsigned int line_number);
+	char *opcode;
 
-	if (argc != 2)
-		fprintf(stderr, "USAGE: monty file\n"), exit(EXIT_FAILURE);
-	file = fopen(argv[1], "r");
-	if (file == NULL)
-		fprintf(stderr, "Error: Can't open file %s\n", argv[1]), exit(EXIT_FAILURE);
-	while (1)
+	if (ac != 2)
 	{
-		get_line = getline(&str, &bufsize, file);
-		if (get_line == -1)
-			break;
-		line_count++;
-		operator_array[0] = strtok(str, "\n ");
-		if (operator_array[0] == NULL)
-			get_nop(&head, line_count);
-		else if (strcmp("push", operator_array[0]) == 0)
-		{
-			temp = strtok(NULL, "\n ");
-
-			get_push(&head, line_count, temp);
-		}
-		else if (operator_array[0] != NULL && operator_array[0][0] != '#')
-		{
-			operator_function = go(operator_array[0], line_count, &head);
-
-			if (operator_function == NULL && line_count == 0)
-			{
-				fprintf(stderr, "L%ld: unknown instruction %s\n",
-					line_count, operator_array[0]), exit(EXIT_FAILURE);
-			}
-		operator_function(&head, line_count);
-		}
+		fprintf(stderr, "USAGE: monty file\n");
+		return (EXIT_FAILURE);
 	}
-	fclose(file), free(str), get_free(head);
-	return (0);
+
+	if (start_vars(&var) != 0)
+		return (EXIT_FAILURE);
+
+	var.file = fopen(av[1], "r");
+	if (!var.file)
+	{
+		fprintf(stderr, "Error: Can't open file %s\n", av[1]);
+		free_all();
+		return (EXIT_FAILURE);
+	}
+
+	while (getline(&var.buff, &var.tmp, var.file) != EOF)
+	{
+		opcode = strtok(var.buff, " \r\t\n");
+		if (opcode != NULL)
+			if (call_funct(&var, opcode) == EXIT_FAILURE)
+			{
+				free_all();
+				return (EXIT_FAILURE);
+			}
+		var.line_number++;
+	}
+
+	free_all();
+
+	return (EXIT_SUCCESS);
 }

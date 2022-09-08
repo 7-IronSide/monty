@@ -1,30 +1,39 @@
-34 lines (28 sloc)  393 Bytes
+>, >, <<
 
->, >, <<						read values
-+++++ +							convert to ascii
+atoi
++++ +++
 [
  >----- ---
  >----- ---
  <<-
 ]
->[								perform multiplication
+
+Multiply
+>[
  >[>+>+<<-]
  >[<+>-]
  <<-
 ]
->[-]>+> >+++++ +++++<			separate numbers
+
+Split numbers
+>[-]>+> >+++++ +++++<
 [
  - >- [>>>]+++++ +++++<<+
  [<<<]>>>>
 ]
 <-
 <+++++ +++++>>>[-<<<->>>]<<<
-<+++++ +						convert to ascii
+
+
+Itoa
+<+++++ +
 [
  >+++++ +++>
  [+++++ +++>]
  <[<]>-
 ]
->>[.<<]<[<<]>> .				putchar result
->>
-+++++ +++++
+Print
+>>[.<<]<[<<]>>.
+
+Print Breakline
+>[-]>++[<+++++>-]<.
